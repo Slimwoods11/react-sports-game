@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Sports Game</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!--React-->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <!--React Dom-->
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+    <!--Babel-->
+    <script
+      crossorigin
+      src="https://unpkg.com/babel-standalone@6/babel.min.js"
+    ></script>
+
+    <script type="text/babel">
+      class Team extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
+            score: 0,
+            shots: 0,
+          };
+
+          this.shotSound = new Audio('./assets/Swish+2.wav');
+
+          this.scoreSound = new Audio('./assets/cheers.wav');
+        }
+
+        shotMaker = (event) => {
+          let score = this.state.score;
+          this.shotSound.play();
+          if (Math.random() > 0.55) {
+            score += 1;
+
+            setTimeout(() => {
+              this.scoreSound.play();
+            }, 20);
+          }
+
+          this.setState((state, props) => ({
+            shots: state.shots + 1,
+            score,
+          }));
+        };
+
+        shotsMade = (event) => {
+          this.setState((state, props) => ({
+            score: state.score + 1,
+          }));
+        };
+
+        render() {
+          let shotPercentageDiv;
+
+          if (this.state.shots) {
+            const shotPercentage = Math.round(
+              (this.state.score / this.state.shots) * 100
+            );
+            shotPercentageDiv = (
+              <div>
+                <strong>Shooting %: {shotPercentage}</strong>
+              </div>
+            );
+          }
+          return (
+            <div>
+              <div className="Team">
+                <img src={this.props.image} alt="Team" />
+                {this.state.shots}
+                <button onClick={(event) => this.shotMaker(event)}>
+                  shots (+)
+                </button>
+              </div>
+              <div>
+                <strong>shots:</strong> {this.state.shots}
+              </div>
+              <div>
+                <strong>score:</strong> {this.state.score}
+              </div>
+              {shotPercentageDiv}
+            </div>
+          );
+        }
+      }
+
+      function Game(props) {
+        return (
+          <div>
+            <h1>Welcome to {props.venue}</h1>
+            <Team name={props.awayTeam.name} image={props.awayTeam.logoSrc} />
+
+            <Team name={props.homeTeam.name} image={props.homeTeam.logoSrc} />
+          </div>
+        );
+      }
+
+      function APP(props) {
+        const kings = {
+          name: 'Kingz',
+          logoSrc:
+            'https://tse1.mm.bing.net/th?id=OIP.sFHuyI78X_FiJ-ZQcyMEZQHaEB&pid=Api&P=0&w=285&h=155',
+        };
+
+        const devilz = {
+          name: 'Devilz',
+          logoSrc:
+            'https://tse3.mm.bing.net/th?id=OIP.JAbDorKMUxYOKBmpbas03gHaIa&pid=Api&P=0&w=300&h=300',
+        };
+
+        const warrior = {
+          name: 'Old Warrior',
+          logoSrc:
+            'https://tse2.mm.bing.net/th?id=OIP.f6WDWASU7K8vpVE9uvOCwQHaK_&pid=Api&P=0&w=300&h=300',
+        };
+
+        const ham = {
+          name: 'Hamites',
+          logoSrc:
+            'http://c7.alamy.com/comp/B0D8F4/africa-man-with-spear-central-african-republic-portrait-of-a-warrior-B0D8F4.jpg',
+        };
+        return (
+          <div className="App">
+            <Game venue="IS REAL" homeTeam={kings} awayTeam={devilz} />
+            <Game venue="Zion House" homeTeam={warrior} awayTeam={ham} />
+          </div>
+        );
+      }
+
+      ReactDOM.render(
+        <APP />,
+
+        document.getElementById('root')
+      );
+    </script>
+  </body>
+</html>
